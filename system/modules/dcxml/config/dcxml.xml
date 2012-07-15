@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dc:dc xmlns:dc="http://www.contao.org/DCXML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.contao.org/DCXML dcxml.xsd">
+
+	<dc:config dataContainer="Table" enableVersioning="true" switchToEdit="true">
+		<dc:ctable>tl_bar</dc:ctable>
+	</dc:config>
+
+	<dc:list>
+		<dc:sorting mode="2" flag="1">
+			<dc:panelLayout>
+				<dc:row>
+					<dc:filter/>
+				</dc:row>
+				<dc:row>
+					<dc:sort/>
+					<dc:search/>
+					<dc:limit/>
+				</dc:row>
+			</dc:panelLayout>
+			<dc:fields>
+				<dc:field>title</dc:field>
+			</dc:fields>
+		</dc:sorting>
+
+		<dc:label>
+			<dc:fields>
+				<dc:field>title</dc:field>
+			</dc:fields>
+			<dc:format>%s</dc:format>
+		</dc:label>
+
+		<dc:globalOperations>
+			<dc:action name="all">
+				<dc:labelArray>TL_LANG.MSC.all</dc:labelArray>
+				<dc:href>act=select</dc:href>
+				<dc:class>header_edit_all</dc:class>
+				<dc:attributes>onclick="Backend.getScrollOffset();"</dc:attributes>
+			</dc:action>
+		</dc:globalOperations>
+
+		<dc:operations>
+			<dc:action name="edit">
+				<dc:label>
+					<dc:de>
+						<dc:label>Kategorie editieren</dc:label>
+						<dc:description>Kategorie ID %s editieren</dc:description>
+					</dc:de>
+				</dc:label>
+				<dc:href>table=tl_bar</dc:href>
+				<dc:icon>edit.gif</dc:icon>
+				<dc:attributes>class="contextmenu"</dc:attributes>
+			</dc:action>
+			<dc:action name="editheader">
+				<dc:label>
+					<dc:de>
+						<dc:label>Kategorieeinstellungen editieren</dc:label>
+						<dc:description>Kategorieeinstellungen ID %s editieren</dc:description>
+					</dc:de>
+				</dc:label>
+				<dc:href>act=edit</dc:href>
+				<dc:icon>header.gif</dc:icon>
+				<dc:attributes>class="edit-header"</dc:attributes>
+			</dc:action>
+			<dc:action name="toggle">
+				<dc:label>
+					<dc:de>
+						<dc:label>Kategorie anzeigen/ausblenden</dc:label>
+						<dc:description>Kategorie anzeigen/ausblenden</dc:description>
+					</dc:de>
+				</dc:label>
+				<dc:icon>visible.gif</dc:icon>
+				<dc:attributes>onclick="Backend.getScrollOffset(); return AjaxRequest.toggleVisibility(this, %s);"</dc:attributes>
+				<dc:buttonCallback class="tl_foo" method="toggleIcon" />
+			</dc:action>
+			<dc:action name="copy">
+				<dc:label>
+					<dc:de>
+						<dc:label>Kategorie kopieren</dc:label>
+						<dc:description>Kategorie ID %s kopieren</dc:description>
+					</dc:de>
+				</dc:label>
+				<dc:href>act=paste&amp;mode=copy</dc:href>
+				<dc:icon>copy.gif</dc:icon>
+				<dc:attributes>onclick="Backend.getScrollOffset();"</dc:attributes>
+			</dc:action>
+			<dc:action name="delete">
+				<dc:label>
+					<dc:de>
+						<dc:label>Kategorie löschen</dc:label>
+						<dc:description>Kategorie ID %s löschen</dc:description>
+					</dc:de>
+				</dc:label>
+			</dc:action>
+		</dc:operations>
+	</dc:list>
+
+	<dc:palette></dc:palette>
+
+	<dc:subPalette></dc:subPalette>
+
+	<dc:fields>
+		<dc:field name="title" inputType="text" exclude="true" search="true" sorting="true">
+			<dc:label>
+				<dc:de>
+					<dc:label>Titel</dc:label>
+					<dc:description>Bitte vergeben Sie einen Titel für diese Kategorie an.</dc:description>
+				</dc:de>
+			</dc:label>
+			<dc:eval>
+				<dc:mandatory>true</dc:mandatory>
+				<dc:maxlength>255</dc:maxlength>
+				<dc:class>w50</dc:class>
+			</dc:eval>
+		</dc:field>
+
+		<dc:field name="alias" inputType="text" exclude="true" search="true" sorting="true">
+			<dc:label>
+				<dc:de>
+					<dc:label>Alias</dc:label>
+					<dc:description>Geben Sie einen Alias ein. Lassen Sie dieses Feld leer um den Alias automatisch zu erzeugen.</dc:description>
+				</dc:de>
+			</dc:label>
+			<dc:eval>
+				<dc:rgxp>alnum</dc:rgxp>
+				<dc:unique>true</dc:unique>
+				<dc:spaceToUnderscore>true</dc:spaceToUnderscore>
+				<dc:maxlength>128</dc:maxlength>
+				<dc:class>w50</dc:class>
+			</dc:eval>
+		</dc:field>
+
+		<dc:field name="published" inputType="checkbox" exclude="true" filter="true">
+			<dc:label>
+				<dc:de>
+					<dc:label>Veröffentlicht</dc:label>
+					<dc:description>Die Kategorie auf der Webseite anzeigen.</dc:description>
+				</dc:de>
+			</dc:label>
+			<dc:eval>
+				<dc:doNotCopy>true</dc:doNotCopy>
+			</dc:eval>
+		</dc:field>
+	</dc:fields>
+</dc:dc>

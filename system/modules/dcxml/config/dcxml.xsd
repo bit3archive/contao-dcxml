@@ -1,0 +1,3313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.contao.org/DCXML" xmlns:dc="http://www.contao.org/DCXML"
+	elementFormDefault="qualified">
+
+	<xsd:element name="dc">
+		<xsd:annotation>
+			<xsd:documentation>
+				A DataContainer definition in XML.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="dc:config" minOccurs="0" />
+				<xsd:element ref="dc:list" minOccurs="0" />
+				<xsd:element ref="dc:palette" minOccurs="0" />
+				<xsd:element ref="dc:subPalette" minOccurs="0" />
+				<xsd:element ref="dc:fields" minOccurs="0" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="config">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="de">
+				Die
+				Tabellenkonfiguration legt unter anderem fest, welcher Data
+				Container-Typ verwendet wird oder ob Relationen zu anderen Tabellen
+				bestehen. Sie können außerdem die Versionierung aktivieren und
+				festlegen, was mit Kinddatensätzen beim Löschen von
+				Elterndatensätzen passiert.
+			</xsd:documentation>
+			<xsd:documentation xml:lang="en">
+				The table configuration
+				describes the table itself, e.g. which type of data container is
+				used to store the data or how it relates to other tables. Also you
+				can enable versioning or define what happens to child records when
+				data is being edited or deleted.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:choice minOccurs="0">
+					<xsd:element name="label" type="dc:labelTranslations">
+						<xsd:annotation>
+							<xsd:documentation xml:lang="de">
+								Die Bezeichnung
+								wird
+								in der Seitenstruktur und in der Dateiverwaltung verwendet.
+							</xsd:documentation>
+							<xsd:documentation xml:lang="en">
+								The label is used
+								with page or file trees.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+
+					<xsd:element name="labelArray" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation xml:lang="de">
+								Die Bezeichnung
+								wird
+								in der Seitenstruktur und in der Dateiverwaltung verwendet.
+								Enthält normalerweise eine Referenz auf das Spracharray.
+							</xsd:documentation>
+							<xsd:documentation xml:lang="en">
+								The label is used
+								with page or file trees and typically includes reference to the
+								language array.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:choice>
+
+				<xsd:element name="ptable" minOccurs="0" type="xsd:string">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="de">
+							Name der bezogenen
+							Elterntabelle (table.pid = ptable.id).
+						</xsd:documentation>
+						<xsd:documentation xml:lang="en">
+							Name of the related
+							parent table (table.pid = ptable.id).
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:element name="ctable" minOccurs="0" maxOccurs="unbounded"
+					type="xsd:string">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="de">
+							Name der bezogenen
+							Kindtabellen (table.id = ctable.pid).
+						</xsd:documentation>
+						<xsd:documentation xml:lang="en">
+							Name of the related
+							child tables (table.id = ctable.pid).
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:element name="validFileTypes" minOccurs="0" type="dc:array">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="de">
+							Liste gültiger
+							Dateiendungen (nur für Dateibäume).
+						</xsd:documentation>
+						<xsd:documentation xml:lang="en">
+							List of valid file
+							extensions (applies to file trees only).
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:element name="onloadCallback" minOccurs="0"
+					type="dc:callbacks">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="de">
+							Ruft eine
+							Callback-Funktion beim Initialisieren des Data Containers auf und
+							übergibt das DataContainer-Objekt als Argument.
+						</xsd:documentation>
+						<xsd:documentation xml:lang="en">
+							Calls a custom
+							function when a DataContainer is initialized and passes the
+							DataContainer object as argument.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:element name="onsubmitCallback" minOccurs="0"
+					type="dc:callbacks">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="de">
+							Ruft eine
+							Callback-Funktion nach der Aktualisierung eines Datensatzes auf
+							und übergibt das DataContainer-Objekt als Argument.
+						</xsd:documentation>
+						<xsd:documentation xml:lang="en">
+							Calls a custom
+							function after a record has been updated and passes the
+							DataContainer object as argument.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:element name="ondeleteCallback" minOccurs="0"
+					type="dc:callbacks">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="de">
+							Ruft eine
+							Callback-Funktion beim Löschen eines Datensatzes auf und übergibt
+							das DataContainer-Objekt als Argument.
+						</xsd:documentation>
+						<xsd:documentation xml:lang="en">
+							Calls a custom
+							function when a record is deleted and passes the DataContainer
+							object as argument.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:element name="oncutCallback" minOccurs="0"
+					type="dc:callbacks">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="de">
+							Ruft eine
+							Callback-Funktion beim Verschieben eines Datensatzes auf und
+							übergibt das DataContainer-Objekt als Argument. Hinzugefügt in
+							Version 2.8.2.
+						</xsd:documentation>
+						<xsd:documentation xml:lang="en">
+							Calls a custom
+							function when a record is moved and passes the DataContainer
+							object as argument. Added in version 2.8.2.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:element name="oncopyCallback" minOccurs="0"
+					type="dc:callbacks">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="de">
+							Ruft eine
+							Callback-Funktion beim Duplizieren eines Datensatzes auf und
+							übergibt die Insert ID sowie das DataContainer-Objekt als
+							Argument. Hinzugefügt in Version 2.8.2.
+						</xsd:documentation>
+						<xsd:documentation xml:lang="en">
+							Calls a custom
+							function when a record is duplicated and passes the insert ID and
+							the DataContainer object as argument. Added in version 2.8.2.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+
+			<xsd:attribute name="dataContainer" type="xsd:string"
+				use="optional" default="Table">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="de">
+						Table (Tabellen),
+						File (lokale Konfigurationsdatei) oder Folder (Dateiverwaltung).
+					</xsd:documentation>
+					<xsd:documentation xml:lang="en">
+						Table (database
+						table), File (local configuration file) or Folder (file manager).
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+
+			<xsd:attribute name="closed" type="xsd:boolean" use="optional"
+				default="false">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="de">
+						Verbietet das Anlegen
+						neuer Datensätze in der Tabelle.
+					</xsd:documentation>
+					<xsd:documentation xml:lang="en">
+						If true, you cannot
+						add further records to the table.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+
+			<xsd:attribute name="notEditable" type="xsd:boolean"
+				use="optional" default="false">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="de">
+						Verbietet das
+						Bearbeiten der Tabelle.
+					</xsd:documentation>
+					<xsd:documentation xml:lang="en">
+						If true, the table
+						cannot be edited.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+
+			<xsd:attribute name="switchToEdit" type="xsd:boolean"
+				use="optional" default="false">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="de">
+						Aktiviert die
+						"Speichern und Bearbeiten"-Schaltfläche beim Anlegen eines neuen
+						Datensatzes (nur Sortierungsmodus 4).
+					</xsd:documentation>
+					<xsd:documentation xml:lang="en">
+						Activates the "save
+						and edit" button when a new record is added (sorting mode 4 only).
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+
+			<xsd:attribute name="enableVersioning" type="xsd:boolean"
+				use="optional" default="true">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="de">
+						Aktiviert das Anlegen
+						einer neuen Version beim Speichern eines Datensatzes.
+					</xsd:documentation>
+					<xsd:documentation xml:lang="en">
+						If true, Contao saves
+						the old version of a record when a new version is created.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+
+			<xsd:attribute name="doNotCopyRecords" type="xsd:boolean"
+				use="optional" default="false">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="de">
+						Verhindert die
+						Duplizierung der Kinddatensätze, wenn ein Datensatz der
+						Elterntabelle dupliziert wird.
+					</xsd:documentation>
+					<xsd:documentation xml:lang="en">
+						If true, Contao will
+						not duplicate records of the current table when a record of its
+						parent table is duplicated.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+
+			<xsd:attribute name="doNotDeleteRecords" type="xsd:boolean"
+				use="optional" default="false">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="de">
+						Verhindert die
+						Löschung der Kinddatensätze, wenn ein Datensatz der Elterntabelle
+						gelöscht wird.
+					</xsd:documentation>
+					<xsd:documentation xml:lang="en">
+						If true, Contao will
+						not delete records of the current table when a record of its
+						parent table is deleted.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="list">
+		<xsd:annotation>
+			<xsd:documentation>
+				The records listing configuration.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="sorting">
+					<xsd:complexType>
+						<xsd:choice maxOccurs="unbounded">
+							<xsd:element name="panelLayout" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Das Panel Layout.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										The panel layout.
+									</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:choice>
+										<xsd:element name="row" minOccurs="0" maxOccurs="unbounded">
+											<xsd:complexType>
+												<xsd:all>
+													<xsd:element name="search" minOccurs="0" />
+													<xsd:element name="sort" minOccurs="0" />
+													<xsd:element name="filter" minOccurs="0" />
+													<xsd:element name="limit" minOccurs="0" />
+												</xsd:all>
+											</xsd:complexType>
+										</xsd:element>
+									</xsd:choice>
+								</xsd:complexType>
+							</xsd:element>
+
+							<xsd:element name="fields" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Eines oder
+										mehrere
+										Felder, anhand derer die Tabelle sortiert wird.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										One or more
+										fields
+										that are used to sort the table.
+									</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:choice minOccurs="0" maxOccurs="unbounded">
+										<xsd:element name="field" type="xsd:IDREF" />
+									</xsd:choice>
+								</xsd:complexType>
+							</xsd:element>
+
+							<xsd:element name="headerFields" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Eines oder
+										mehrere
+										Felder, die im Header des Parent View angezeigt werden
+										(nur
+										Sortierungsmodus 4).
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										One or more
+										fields
+										that will be shown in the header element (sorting mode 4
+										only).
+									</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:choice minOccurs="0" maxOccurs="unbounded">
+										<xsd:element name="field" type="xsd:string" />
+									</xsd:choice>
+								</xsd:complexType>
+							</xsd:element>
+							<xsd:element name="icon" minOccurs="0" type="xsd:string">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Pfad zu einem
+										Symbol, das oberhalb des Baumes angezeigt wird (nur
+										Sortierungsmodus 5 und 6).
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Path to an icon
+										that
+										will be shown on top of the tree (sorting mode 5 and 6
+										only).
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="root" minOccurs="0"
+								type="xsd:nonNegativeInteger">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										IDs der
+										Wurzeldatensätze (Pagemounts). Wird normalerweise automatisch
+										gesetzt.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										IDs of the root
+										records (pagemounts). This value usually takes care of itself.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="filter" minOccurs="0" maxOccurs="unbounded">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Ermöglicht das
+										Hinzufügen eigener Filter.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Allows you to add
+										custom filters.
+									</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:element name="sql" type="xsd:string">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													Das Filter
+													SQL,
+													z.B. "status=?"
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													The filter
+													sql,
+													e.a. "status=?"
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="value" minOccurs="0" maxOccurs="unbounded"
+											type="xsd:string">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													Der Wert der
+													im
+													Filter verwendet wird.
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													The filter
+													value.
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:element>
+
+							<xsd:element name="pasteButtonCallback" minOccurs="0"
+								type="dc:callbacks">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Wird anstatt der
+										Standardroutine zur Erstellung der Einfüge-Schaltflächen
+										ausgeführt.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										This function
+										will
+										be called instead of displaying the default paste buttons.
+										Please
+										specify as array('Class', 'Method').
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="childRecordCallback" minOccurs="0"
+								type="dc:callbacks">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Wird zur
+										Darstellung
+										der Kinddatensätze ausgeführt (nur Sortierungsmodus
+										4).
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										This function
+										will
+										be called to render the child elements (sorting mode 4
+										only).
+										Please specify as array('Class', 'Method').
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+						</xsd:choice>
+
+						<xsd:attribute name="mode" use="optional">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Der
+									Sortierungsmodus.
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									The sorting mode.
+								</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:enumeration value="0">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Keine
+												Sortierung
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Records are not
+												sorted
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+									<xsd:enumeration value="1">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Sortierung nach
+												einem festen Feld
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Records are
+												sorted
+												by a fixed field
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+									<xsd:enumeration value="2">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Sortierung nach
+												einem variablen Feld
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Records are
+												sorted
+												by a switchable field
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+									<xsd:enumeration value="3">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Sortierung
+												anhand
+												der Elterntabelle
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Records are
+												sorted
+												by the parent table
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+									<xsd:enumeration value="4">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Darstellung der
+												Kinddatensätze eines Elterndatensatzes (vgl.
+												Stylesheets-Modul)
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Displays the
+												child
+												records of a parent record (see style sheets module)
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+									<xsd:enumeration value="5">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Darstellung als
+												Baum (vgl. Seitenstruktur)
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Records are
+												displayed as tree (see site structure)
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+									<xsd:enumeration value="6">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Sortierung der
+												Kinddatensätze anhand eines Baumes (vgl. Artikelverwaltung)
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Displays the
+												child
+												records within a tree structure (see articles module)
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:attribute>
+
+						<xsd:attribute name="flag">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Die
+									Sortierreihenfolge.
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									The sorting flag.
+								</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:enumeration value="1">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Aufsteigende
+												Sortierung nach Anfangsbuchstabe
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Sort by initial
+												letter ascending
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+									<xsd:enumeration value="2">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Absteigende
+												Sortierung nach Anfangsbuchstabe
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Sort by initial
+												letter descending
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+									<xsd:enumeration value="3">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Aufsteigende
+												Sortierung nach den ersten beiden Buchstaben
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Sort by initial
+												two letters ascending
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+									<xsd:enumeration value="4">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Absteigende
+												Sortierung nach den ersten beiden Buchstaben
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Sort by initial
+												two letters descending
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+									<xsd:enumeration value="5">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Aufsteigende
+												Sortierung nach Tag
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Sort by day
+												ascending
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+									<xsd:enumeration value="6">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Absteigende
+												Sortierung nach Tag
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Sort by day
+												descending
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+									<xsd:enumeration value="7">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Aufsteigende
+												Sortierung nach Monat
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Sort by month
+												ascending
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+									<xsd:enumeration value="8">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Absteigende
+												Sortierung nach Monat
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Sort by month
+												descending
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+									<xsd:enumeration value="9">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Aufsteigende
+												Sortierung nach Jahr
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Sort by year
+												ascending
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+									<xsd:enumeration value="10">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Absteigende
+												Sortierung nach Jahr
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Sort by year
+												descending
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+									<xsd:enumeration value="11">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Aufsteigende
+												Sortierung
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Sort ascending
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+									<xsd:enumeration value="12">
+										<xsd:annotation>
+											<xsd:documentation xml:lang="de">
+												Absteigende
+												Sortierung
+											</xsd:documentation>
+											<xsd:documentation xml:lang="en">
+												Sort descending
+											</xsd:documentation>
+										</xsd:annotation>
+									</xsd:enumeration>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:attribute>
+
+						<xsd:attribute name="disableGrouping" use="optional"
+							type="xsd:boolean">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Ermöglicht das
+									Deaktivieren der Gruppenüberschriften im List View und Parent
+									View.
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Allows you to
+									disable
+									the group headers in list view and parent view.
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+
+						<xsd:attribute name="childRecordClass" type="xsd:string"
+							use="optional">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Ermöglicht das
+									Hinzufügen einer CSS-Klasse zu den Parent View-Elementen.
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Allows you to add
+									a
+									CSS class to the parent view elements.
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+					</xsd:complexType>
+				</xsd:element>
+
+
+				<xsd:element name="label" minOccurs="0">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element name="fields">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Eines oder
+										mehrere Felder, die in der Liste angezeigt werden.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										One or more
+										fields that will be shown in the list.
+									</xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+									<xsd:choice minOccurs="0" maxOccurs="unbounded">
+										<xsd:element name="field" type="xsd:IDREF" />
+									</xsd:choice>
+								</xsd:complexType>
+							</xsd:element>
+
+							<xsd:element name="format" minOccurs="0" type="xsd:string">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										HTML-Zeichenkette zur Formatierung der angezeigten Felder
+										(z.B.
+										<strong>%s</strong>
+										).
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										HTML string used to format the fields that will be shown (e.g.
+										<strong>%s</strong>
+										).
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="groupCallback" minOccurs="0"
+								type="dc:callbacks">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Wird anstatt der
+										Standardroutine zur Erstellung der Gruppennamen ausgeführt.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Call a custom
+										function instead of using the default group header function.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="labelCallback" minOccurs="0"
+								type="dc:callbacks">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Wird anstatt der
+										Standardroutine zur Erstellung der Bezeichnung ausgeführt.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Call a custom
+										function instead of using the default label function.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+						</xsd:sequence>
+
+						<xsd:attribute name="maxCharacters" use="optional"
+							type="xsd:nonNegativeInteger">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Maximale Länge der
+									Bezeichnung.
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Maximum number of
+									characters of the label.
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+					</xsd:complexType>
+				</xsd:element>
+
+
+				<xsd:element name="globalOperations">
+					<xsd:complexType>
+						<xsd:choice>
+							<xsd:element name="action" maxOccurs="unbounded">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:choice>
+											<xsd:element name="label" type="dc:labelTranslations">
+												<xsd:annotation>
+													<xsd:documentation xml:lang="de">
+														Bezeichnung
+														der
+														Schaltfläche.
+													</xsd:documentation>
+													<xsd:documentation xml:lang="en">
+														Button label.
+													</xsd:documentation>
+												</xsd:annotation>
+											</xsd:element>
+											<xsd:element name="labelArray" type="xsd:string">
+												<xsd:annotation>
+													<xsd:documentation xml:lang="de">
+														Bezeichnung
+														der
+														Schaltfläche.
+													</xsd:documentation>
+													<xsd:documentation xml:lang="en">
+														Button label.
+													</xsd:documentation>
+												</xsd:annotation>
+											</xsd:element>
+										</xsd:choice>
+										<xsd:element name="href" minOccurs="0" type="xsd:string">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													URL-Fragment,
+													das
+													beim Anklicken der Schaltfläche an die URL angehängt
+													wird
+													(z.B. act=editAll).
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													URL fragment
+													that
+													is added to the URI string when the button is clicked
+													(e.g.
+													act=editAll).
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="class" minOccurs="0" type="xsd:string">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													CSS-Klasse der
+													Schaltfläche.
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													CSS class
+													attribute of the button.
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="attributes" minOccurs="0"
+											type="xsd:string">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													Zusätzliche
+													Attribute wie z.B. Eventhandler oder Style-Definitionen.
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													Additional
+													attributes like event handler or style definitions.
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="buttonCallback" minOccurs="0"
+											type="dc:callback">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													Wird anstatt
+													der
+													Standardroutine zur Erstellung des Navigationssymbols
+													ausgeführt.
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													Call a custom
+													function instead of using the default button function.
+													Please
+													specify as array('Class', 'Method').
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+									</xsd:sequence>
+
+									<xsd:attribute name="name" type="xsd:string" />
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:choice>
+					</xsd:complexType>
+				</xsd:element>
+
+				<xsd:element name="operations">
+					<xsd:complexType>
+						<xsd:choice>
+							<xsd:element name="action" maxOccurs="unbounded">
+								<xsd:complexType>
+									<xsd:sequence>
+										<xsd:choice>
+											<xsd:element name="label" type="dc:labelTranslations">
+												<xsd:annotation>
+													<xsd:documentation xml:lang="de">
+														Bezeichnung
+														der
+														Schaltfläche.
+													</xsd:documentation>
+													<xsd:documentation xml:lang="en">
+														Button label.
+													</xsd:documentation>
+												</xsd:annotation>
+											</xsd:element>
+											<xsd:element name="labelArray" type="xsd:string">
+												<xsd:annotation>
+													<xsd:documentation xml:lang="de">
+														Bezeichnung
+														der
+														Schaltfläche.
+													</xsd:documentation>
+													<xsd:documentation xml:lang="en">
+														Button label.
+													</xsd:documentation>
+												</xsd:annotation>
+											</xsd:element>
+										</xsd:choice>
+										<xsd:element name="href" minOccurs="0" type="xsd:string">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													URL-Fragment,
+													das
+													beim Anklicken der Schaltfläche an die URL angehängt
+													wird
+													(z.B. act=editAll).
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													URL fragment
+													that
+													is added to the URI string when the button is clicked
+													(e.g.
+													act=editAll).
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="icon" minOccurs="0" type="xsd:string">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													Pfad und
+													Dateiname des Icons.
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													Path and
+													filename
+													of the icon.
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="attributes" minOccurs="0"
+											type="xsd:string">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													Zusätzliche
+													Attribute wie z.B. Eventhandler oder Style-Definitionen.
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													Additional
+													attributes like event handler or style definitions.
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+										<xsd:element name="buttonCallback" minOccurs="0"
+											type="dc:callback">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													Wird anstatt
+													der
+													Standardroutine zur Erstellung des Navigationssymbols
+													ausgeführt.
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													Call a custom
+													function instead of using the default button function.
+													Please
+													specify as array('Class', 'Method').
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:element>
+									</xsd:sequence>
+
+									<xsd:attribute name="name" type="xsd:string" />
+								</xsd:complexType>
+							</xsd:element>
+						</xsd:choice>
+					</xsd:complexType>
+				</xsd:element>
+
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="palette"></xsd:element>
+
+	<xsd:element name="subPalette"></xsd:element>
+
+	<xsd:element name="fields">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="de">
+				Die Felder der Tabelle.
+			</xsd:documentation>
+			<xsd:documentation xml:lang="en">
+				The table fields.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="dc:field" minOccurs="0" maxOccurs="unbounded" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="field">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="de">
+				Spezifikation eines
+				einzelnen Feldes.
+			</xsd:documentation>
+			<xsd:documentation xml:lang="en">
+				A single table field
+				definition.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:choice minOccurs="0">
+					<xsd:element name="label" type="dc:labelTranslations">
+						<xsd:annotation>
+							<xsd:documentation xml:lang="de">
+								Bezeichnung des
+								Feldes.
+							</xsd:documentation>
+							<xsd:documentation xml:lang="en">
+								Field label.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="labelArray" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation xml:lang="de">
+								Bezeichnung des
+								Feldes.
+							</xsd:documentation>
+							<xsd:documentation xml:lang="en">
+								Field label.
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:choice>
+
+				<xsd:element name="default" minOccurs="0" type="xsd:string">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="de">
+							Der Standardwert
+							wird bei der Erstellung eines neuen Datensatzes gesetzt.
+						</xsd:documentation>
+						<xsd:documentation xml:lang="en">
+							Default value that
+							is set when a new record is created.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:choice minOccurs="0">
+					<xsd:element name="options">
+						<xsd:annotation>
+							<xsd:documentation xml:lang="de">
+								Optionen eines
+								Drop-Down- oder Radio-Button-Menüs.
+							</xsd:documentation>
+							<xsd:documentation xml:lang="en">
+								Options of a
+								drop-down menu or radio button menu.
+							</xsd:documentation>
+						</xsd:annotation>
+						<xsd:complexType>
+							<xsd:choice minOccurs="0" maxOccurs="unbounded">
+								<xsd:element ref="dc:option" />
+								<xsd:element ref="dc:optionGroup" />
+							</xsd:choice>
+						</xsd:complexType>
+					</xsd:element>
+
+					<xsd:element name="optionsCallback" type="dc:callback">
+						<xsd:annotation>
+							<xsd:documentation xml:lang="de">
+								Kann verwendet
+								werden, um die Optionen eines Drow-Down- oder
+								Radio-Button-Menüs
+								mit Hilfe einer individuellen Funktion zu
+								laden.
+							</xsd:documentation>
+							<xsd:documentation xml:lang="en">
+								Callback function
+								that returns an array of options. Please specify as
+								array('Class', 'Method').
+							</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+
+					<xsd:element name="foreignKey">
+						<xsd:annotation>
+							<xsd:documentation xml:lang="de">
+								Lädt die Optionen
+								eines Drop-Down- oder Radio-Button-Menüs aus einer
+								Tabelle.
+								Verwendet die ID als Schlüssel und das angegebenen Feld
+								als Wert.
+							</xsd:documentation>
+							<xsd:documentation xml:lang="en">
+								Get options from a
+								database table. Returns ID as key and the field
+								you specify as
+								value.
+							</xsd:documentation>
+						</xsd:annotation>
+						<xsd:complexType>
+							<xsd:attribute name="table" type="xsd:string" />
+							<xsd:attribute name="labelField" type="xsd:string" />
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+
+				<xsd:element name="reference" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="de">
+							Bezeichnungen der
+							Optionen.
+						</xsd:documentation>
+						<xsd:documentation xml:lang="en">
+							Array that holds the
+							options labels.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:choice>
+							<xsd:element name="value" type="xsd:string" />
+							<xsd:element name="label" type="dc:translations" />
+						</xsd:choice>
+					</xsd:complexType>
+				</xsd:element>
+
+				<xsd:element name="explanation" minOccurs="0"
+					type="dc:translations">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="de">
+							Erklärung des
+							Feldes.
+						</xsd:documentation>
+						<xsd:documentation xml:lang="en">
+							Array that holds the
+							explanation.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:element name="inputFieldCallback" minOccurs="0"
+					type="dc:callback">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="de">
+							Wird anstatt der
+							Standardroutine zur Erstellung eines Formularfeldes
+							ausgeführt und
+							übergibt das DataContainer-Objekt sowie die
+							Bezeichnung als
+							Argument.
+						</xsd:documentation>
+						<xsd:documentation xml:lang="en">
+							Executes a custom
+							function instead of using the default input field
+							routine and
+							passes the the DataContainer object and the label as
+							arguments.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:element name="eval" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="de">
+							Verschiedene
+							Einstellungen.
+						</xsd:documentation>
+						<xsd:documentation xml:lang="en">
+							Various
+							configuration options.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:any>
+							<xsd:element name="helpwizard" minOccurs="0"
+								type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Zeigt das Icon
+										zum Aufruf des Hilfeassistenten neben der Feldbezeichnung an.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true the
+										helpwizard icon will appear next to the field label.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="mandatory" minOccurs="0" type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Macht ein Feld zu
+										einem Pflichtfeld.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true the field
+										cannot be empty.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="maxlength" minOccurs="0"
+								type="xsd:positiveInteger">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Legt die maximale
+										Anzahl an Zeichen fest, die in das Feld eingegeben werden
+										dürfen.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Maximum number of
+										characters that is allowed in the current field.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="minlength" minOccurs="0"
+								type="xsd:positiveInteger">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Legt die Anzahl
+										an Zeichen fest, die mindestens in das Feld eingegeben werden
+										müssen.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Minimum number of
+										characters that have to be entered.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="fallback" minOccurs="0" type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Legt fest, dass
+										das Feld nur ein einziges Mal pro Tabelle ausgewählt werden
+										darf.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true the field
+										can only be assigned once per table.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="rgxp" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Regulärer
+										Ausdruck
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Regular
+										expression
+									</xsd:documentation>
+								</xsd:annotation>
+								<xsd:simpleType>
+									<xsd:restriction base="xsd:string">
+										<xsd:enumeration value="digit">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													erlaubt nur
+													numerische Zeichen
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													allows numeric
+													characters only
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:enumeration value="alpha">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													erlaubt nur
+													alphabetische Zeichen
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													allows
+													alphabetic characters only
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:enumeration value="alnum">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													erlaubt nur
+													alphanumerische Zeichen
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													allows
+													alphanumeric characters only
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:enumeration value="extnd">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													erlaubt alles
+													außer #&amp;()/&lt;=&gt; </xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													disallows
+													#&amp;()/&lt;=&gt; </xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:enumeration value="prcnt">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													erlaubt Zahlen
+													zwischen 0 und 100
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													allows numbers
+													between 0 and 100
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:enumeration value="date">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													prüft auf ein
+													gültiges Datum
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													expects a
+													valid date
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:enumeration value="time">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													prüft auf eine
+													gültige Uhrzeit
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													expects a
+													valid time
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:enumeration value="datim">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													prüft auf ein
+													gültiges Datum mit Uhrzeit
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													expects a
+													valid date and time
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:enumeration value="email">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													prüft auf eine
+													gültige E-Mail-Adresse
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													expects a
+													valid e-mail address
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:enumeration value="friendly">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													prüft auf eine
+													gültige E-Mail-Adresse im "friendly name format"
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													expects a
+													valid "friendly name format" e-mail address
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:enumeration value="url">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													prüft auf eine
+													gültige URL
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													expects a
+													valid URL
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:enumeration value="phone">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													prüft auf eine
+													gültige Telefonnummer
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													expects a
+													valid phone number
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:pattern value=".*" />
+									</xsd:restriction>
+								</xsd:simpleType>
+							</xsd:element>
+
+							<xsd:element name="cols" minOccurs="0"
+								type="xsd:positiveInteger">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Anzahl an Spalten
+										(gilt nur für Textareas).
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Number of columns
+										(textarea fields only).
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="rows" minOccurs="0"
+								type="xsd:positiveInteger">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Anzahl an Reihen
+										(gilt nur für Textareas).
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Number of rows
+										(textarea fields only).
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="wrap" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Zeilenumbruch
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Word wrapping
+									</xsd:documentation>
+								</xsd:annotation>
+								<xsd:simpleType>
+									<xsd:restriction base="xsd:string">
+										<xsd:enumeration value="off">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													Zeilenumbruch
+													ausschalten
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													disable word
+													wrapping
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:enumeration value="soft">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													Weicher
+													Zeilenumbruch
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													soft word
+													wrapping
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:enumeration value="hard">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													Harter
+													Zeilenumbruch
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													hard word
+													wrapping
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+									</xsd:restriction>
+								</xsd:simpleType>
+							</xsd:element>
+
+							<xsd:element name="multiple" minOccurs="0" type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Erlaubt die
+										mehrfache Auswahl bzw. Eingabe und kann für Textfelder,
+										Drop-Down-Menüs, Radio-Buttons und Checkboxen verwendet
+										werden. Für den Checkbox-Assistenten benötigt.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Make the input
+										field multiple. Applies to text fields, select
+										menus, radio
+										buttons and checkboxes. Required for the checkbox
+										wizard.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="size" minOccurs="0"
+								type="xsd:positiveInteger">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Größe eines
+										Mehrfachfeldes bzw. Anzahl an Eingabefeldern.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Size of a
+										multiple select menu or number of input fields.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="style" minOccurs="0" type="xsd:string">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										CSS-Formatierung
+										(z.B. border:2px)
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Style attributes
+										(e.g. border:2px)
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="rte" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Rich Text
+										Editor-Datei
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Rich text editor
+										file
+									</xsd:documentation>
+								</xsd:annotation>
+								<xsd:simpleType>
+									<xsd:restriction base="xsd:string">
+										<xsd:enumeration value="tinyMCE">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													Konfigurationsdatei config/tinyMCE.php verwenden
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													use file
+													config/tinyMCE.php
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:enumeration value="tinyFlash">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													Konfigurationsdatei config/tinyFlash.php verwenden
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													use file
+													config/tinyFlash.php
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:pattern value=".*" />
+									</xsd:restriction>
+								</xsd:simpleType>
+							</xsd:element>
+
+							<xsd:element name="submitOnChange" minOccurs="0"
+								type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Legt fest, ob das
+										Formular bei der Änderung des Feldwertes
+										automatisch
+										abgeschickt wird.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true the form
+										will be submitted when the field value changes.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="nospace" minOccurs="0" type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Legt fest, ob
+										Leerzeichen eingegeben werden dürfen.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true
+										whitespace characters will not be allowed.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="allowHtml" minOccurs="0" type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Legt fest, ob
+										HTML-Eingaben erlaubt sind.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true the
+										current field will accept HTML input.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="preserveTags" minOccurs="0"
+								type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Erlaubt alle
+										HTML-Tags (!) in Benutzereingaben.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true no HTML
+										tags will be removed at all.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="decodeEntities" minOccurs="0"
+								type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Legt fest, ob
+										HTML-Entities dekodiert werden (immer der Fall bei
+										HTML-Eingaben).
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true HTML
+										entities will be decoded. Note that HTML entities
+										are always
+										decoded if allowHtml is true.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="doNotSaveEmpty" minOccurs="0"
+								type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Verhindert das
+										Speichern des leeren Feldes.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true the field
+										will not be saved if it is empty.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="alwaysSave" minOccurs="0"
+								type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Legt fest, dass
+										Eingaben immer gespeichert werden, selbst wenn der
+										Feldwert
+										nicht verändert wurde. Hinzugefügt in Version
+										2.7.RC1.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true the field
+										will always be saved, even if its value has
+										not changed
+										(available from version 2.7.RC1). This can be
+										useful in
+										conjunction with a load_callback.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="spaceToUnderscore" minOccurs="0"
+								type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Wandelt alle
+										Leerzeichen in Unterstriche um.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true any
+										whitespace character will be replaced by an
+										underscore.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="unique" minOccurs="0" type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Legt fest, dass
+										ein Feldwert nur einmal vorkommen darf.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true the field
+										value cannot be saved if it exists already.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="encrypt" minOccurs="0" type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Speichert den
+										Feldwert verschlüsselt.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true the field
+										value will be stored encrypted.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="trailingSlash" minOccurs="0"
+								type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Legt fest, ob dem
+										Feldwert ein Schrägstrich hinzugefügt (true)
+										oder ein
+										bestehender Schrägstrich am Ende entfernt (false)
+										wird.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true a
+										trailing slash will be added to the field value. If
+										false, an
+										existing trailing slash will be removed from the
+										field value.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="files" minOccurs="0" type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Legt fest, ob
+										Dateien und Ordner oder nur Ordner angezeigt werden.
+										Gilt nur
+										für Dateibäume.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true files and
+										folders will be shown. If false, only folders
+										will be shown.
+										Applies to file trees only.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="filesOnly" minOccurs="0" type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Entfernt die
+										Radio Buttons bzw. Checkboxen zur Auswahl von Ordnern.
+										Gilt nur
+										für Dateibäume.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Removes the radio
+										buttons or checkboxes next to folders. Applies to
+										file trees
+										only.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="extensions" minOccurs="0" type="dc:array">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Beschränkt den
+										Dateibaum auf bestimmte Dateitypen (kommagetrennte
+										Liste). Gilt
+										nur für Dateibäume.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Limits the file
+										tree to certain filetypes (comma separated list).
+										Applies to
+										file trees only.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="path" minOccurs="0" type="xsd:string">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Individuelles
+										Wurzelverzeichnis für Dateibäume.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Custom root
+										directory for file trees. Applies to file trees only.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="fieldType" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Feldtyp
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Input field type
+									</xsd:documentation>
+								</xsd:annotation>
+								<xsd:simpleType>
+									<xsd:restriction base="xsd:string">
+										<xsd:enumeration value="checkbox">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													erlaubt die
+													Auswahl mehrerer Dateien
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													allow multiple
+													selections
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:enumeration value="radio">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													erlaubt die
+													Auswahl genau einer Datei
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													allow a single
+													selection only
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+									</xsd:restriction>
+								</xsd:simpleType>
+							</xsd:element>
+
+							<xsd:element name="includeBlankOption" minOccurs="0"
+								type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Legt fest, ob ein
+										Drop-Down-Menü eine leere Option am Anfang
+										enthält.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true a blank
+										option will be added to the options array.
+										Applies to drop-down
+										menus only.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="blankOptionLabel" minOccurs="0"
+								type="dc:translations">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Bezeichnung der
+										leeren Option (Standard: -).
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Label for the
+										blank option (defaults to -).
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="findInSet" minOccurs="0" type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Sortiert ein
+										Optionsarray anhand der Schlüssel anstatt anhand der
+										Werte.
+										Hinzugefügt in Version 2.7.RC1.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Sort by the
+										actual option values instead of their labels
+										(available from
+										version 2.7.RC1).
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="datepicker" minOccurs="0"
+								type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Konfiguration des
+										Assistenten zur Datumsauswahl.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Date picker
+										configuration string.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="feEditable" minOccurs="0"
+								type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Legt fest, ob ein
+										Feld im Frontend bearbeitet werden darf. Gilt
+										nur für die
+										Tabelle tl_member.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true the
+										current field can be edited in the frontend. Applies
+										to table
+										tl_member only.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="feGroup" minOccurs="0">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Gilt nur für die
+										Tabelle tl_member. Das Hinzufügen eigener Gruppen
+										ist möglich.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Applies to table
+										tl_member only. You can also define your own groups.
+									</xsd:documentation>
+								</xsd:annotation>
+								<xsd:simpleType>
+									<xsd:restriction base="xsd:string">
+										<xsd:enumeration value="personal">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													Persönliche
+													Daten
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													personal data
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:enumeration value="address">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													Adressdaten
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													address
+													details
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:enumeration value="contact">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													Kontaktdaten
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													contact
+													details
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:enumeration value="login">
+											<xsd:annotation>
+												<xsd:documentation xml:lang="de">
+													Login-Daten
+												</xsd:documentation>
+												<xsd:documentation xml:lang="en">
+													login details
+												</xsd:documentation>
+											</xsd:annotation>
+										</xsd:enumeration>
+										<xsd:pattern value=".*" />
+									</xsd:restriction>
+								</xsd:simpleType>
+							</xsd:element>
+
+							<xsd:element name="feViewable" minOccurs="0"
+								type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Legt fest, ob das
+										Feld in der Mitgliederliste sichtbar ist.
+										Hinzugefügt in
+										Version 2.6.2.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true the
+										current field is viewable in the member listing
+										module (version
+										2.6.2).
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="doNotCopy" minOccurs="0" type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Legt fest, dass
+										das Feld beim Duplizieren des Datensatzes nicht
+										mit kopiert
+										wird.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true the
+										current field will not be duplicated if the record
+										is
+										duplicated.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="hideInput" minOccurs="0" type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Versteckt den
+										Inhalt des Feldes (dieser ist jedoch trotzdem im
+										Quelltext
+										sichtbar!).
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true the field
+										value will be hidden (it is still visible in
+										the page source
+										though!).
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="doNotShow" minOccurs="0" type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Versteckt das
+										Feld in der "Mehrere bearbeiten"- und "Details
+										anzeigen"-Ansicht.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										If true the
+										current field will not be shown in "edit all" or
+										"show details"
+										mode.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="isBoolean" minOccurs="0" type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Zeigt an, dass
+										das Feld vom Typ Boolean ist.
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Indicates that a
+										particular field is boolean.
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="disabled" minOccurs="0" type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Deaktiviert das
+										Eingabefeld (wird nicht von allen Feldern unterstützt).
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Disables the
+										field (not supported by all field types).
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="readonly" minOccurs="0" type="xsd:boolean">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										Das Feld kann nur
+										gelesen werden (wird nicht von allen Feldern
+										unterstützt).
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										Makes the field
+										read only (not supported by all field types).
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+
+							<xsd:element name="class" minOccurs="0" type="xsd:string">
+								<xsd:annotation>
+									<xsd:documentation xml:lang="de">
+										CSS Classes
+									</xsd:documentation>
+									<xsd:documentation xml:lang="en">
+										CSS classes
+									</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+						</xsd:any>
+					</xsd:complexType>
+				</xsd:element>
+
+				<xsd:element name="customEval" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="de">
+							Beliebige weitere
+							eval Definition.
+							Der Knoten-Name wird als Array-Schlüssel
+							interpretiert und der Knoten-Inhalt als Array-Inhalt.
+						</xsd:documentation>
+						<xsd:documentation xml:lang="en">
+							More custom eval
+							definitions.
+							Every node-name is used as array-key and the
+							node-content as array-value.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:choice>
+							<xsd:any minOccurs="0" maxOccurs="unbounded" />
+						</xsd:choice>
+					</xsd:complexType>
+				</xsd:element>
+
+				<xsd:element name="wizard" minOccurs="0" type="dc:callback">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="de">
+							Fügt dem Eingabefeld
+							den Rückgabewert einer individuellen Funktion
+							hinzu.
+						</xsd:documentation>
+						<xsd:documentation xml:lang="en">
+							Call a custom
+							function and add its return value to the input field.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:element name="loadCallback" minOccurs="0"
+					type="dc:callbacks">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="de">
+							Wird beim Laden des
+							Eingabefeldes ausgeführt und übergibt den
+							Feldwert sowie das
+							DataContainer-Objekt als Argument. Erwartet
+							einen Feldwert als
+							Rückgabewert.
+						</xsd:documentation>
+						<xsd:documentation xml:lang="en">
+							These functions will
+							be called when the field is loaded. Passes the
+							field's value and
+							the data container as arguments. Expects the
+							field value as return
+							value.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+
+				<xsd:element name="saveCallback" minOccurs="0"
+					type="dc:callbacks">
+					<xsd:annotation>
+						<xsd:documentation xml:lang="de">
+							Wird beim Speichern
+							des Feldes ausgeführt und übergibt den Feldwert
+							sowie das
+							DataContainer-Objekt als Argument. Erwartet einen
+							Feldwert als
+							Rückgabewert. Durch Auslösen einer Exception kann
+							eine
+							Fehlermeldung ausgegeben werden.
+						</xsd:documentation>
+						<xsd:documentation xml:lang="en">
+							These functions will
+							be called when the field is saved. Passes the
+							field's value and
+							the data container as arguments. Expects the
+							field value as return
+							value. Throw an exception to display an
+							error message.
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+
+			<xsd:attribute name="name" type="xsd:ID">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="de">
+						ID des Feldes.
+						(Feldname)
+					</xsd:documentation>
+					<xsd:documentation xml:lang="en">
+						ID of the field.
+						(field name)
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+
+			<xsd:attribute name="exclude" use="optional" default="true"
+				type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="de">
+						Blendet das Feld für
+						reguläre Benutzer aus. Kann in den Gruppeneinstellungen festgelegt
+						werden (erlaubte Felder).
+					</xsd:documentation>
+					<xsd:documentation xml:lang="en">
+						If true the field
+						will be excluded for non-admins. It can be enabled in the user
+						group module (allowed excluded fields).
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+
+			<xsd:attribute name="search" use="optional" default="false"
+				type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="de">
+						Fügt das Feld dem
+						Suchmenü hinzu (vgl. "Datensätze sortieren" -> "Paneellayout").
+					</xsd:documentation>
+					<xsd:documentation xml:lang="en">
+						If true the field
+						will be included in the search menu (see "sorting records" ->
+						"panelLayout").
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+
+			<xsd:attribute name="sorting" use="optional" default="false"
+				type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="de">
+						Fügt das Feld dem
+						Sortiermenü hinzu (vgl. "Datensätze sortieren" -> "Paneellayout").
+					</xsd:documentation>
+					<xsd:documentation xml:lang="en">
+						If true the field
+						will be included in the sorting menu (see "sorting records" ->
+						"panelLayout").
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+
+			<xsd:attribute name="filter" use="optional" default="false"
+				type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="de">
+						Fügt das Feld dem
+						Filtermenü hinzu (vgl. "Datensätze sortieren" -> "Paneellayout").
+					</xsd:documentation>
+					<xsd:documentation xml:lang="en">
+						If true the field
+						will be included in the filter menu (see "sorting records" ->
+						"panelLayout").
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+
+			<xsd:attribute name="sortingFlag" use="optional">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="1">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Aufsteigende
+									Sortierung nach Anfangsbuchstabe
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Sort by initial
+									letter ascending
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="2">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Absteigende
+									Sortierung nach Anfangsbuchstabe
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Sort by initial
+									letter descending
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="3">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Aufsteigende
+									Sortierung nach den ersten X Buchstaben (vgl. length)
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Sort by initial X
+									letters ascending (see length)
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="4">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Absteigende
+									Sortierung nach den ersten X Buchstaben (vgl. length)
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Sort by initial X
+									letters descending (see length)
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="5">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Aufsteigende
+									Sortierung nach Tag
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Sort by day
+									ascending
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="6">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Absteigende
+									Sortierung nach Tag
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Sort by day
+									descending
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="7">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Aufsteigende
+									Sortierung nach Monat
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Sort by month
+									ascending
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="8">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Absteigende
+									Sortierung nach Monat
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Sort by month
+									descending
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="9">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Aufsteigende
+									Sortierung nach Jahr
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Sort by year
+									ascending
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="10">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Absteigende
+									Sortierung nach Jahr
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Sort by year
+									descending
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="11">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Aufsteigende
+									Sortierung
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Sort ascending
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="12">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Absteigende
+									Sortierung
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Sort descending
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+
+			<xsd:attribute name="sortingLength" use="optional"
+				type="xsd:positiveInteger">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="de">
+						Gibt die Anzahl der
+						Zeichen an, die zur Gruppierung der Datensätze verwendet wird
+						(Sortierflag 3 und 4). Hinzugefügt in Version 2.5.3.
+					</xsd:documentation>
+					<xsd:documentation xml:lang="en">
+						Allows to specify the
+						number of characters that are used to build sorting groups (flag 3
+						and 4). Included since version 2.5.3.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+
+			<xsd:attribute name="inputType" use="optional">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="text">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Textfeld
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Text field
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="password">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Passwortfeld
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Password field
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="textarea">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Textarea
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Textarea
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="select">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Drop-Down-Menü
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Drop-down menu
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="checkbox">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Checkbox
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Checkbox
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="radio">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Radio-Button
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Radio button
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="radioTable">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Tabelle mit
+									Bildern und Radio-Buttons
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Table with images
+									and radio buttons
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="inputUnit">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Textfeld mit
+									Drop-Down-Menü zur Auswahl der Einheit
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Text field with
+									small unit drop-down menu
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="trbl">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Vier Textfelder
+									mit Drop-Down-Menü zur Auswahl der Einheit
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Four text fields
+									with a small unit drop-down menu
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="chmod">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									CHMOD-Tabelle
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									CHMOD table
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="pageTree">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Seitenbaum
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Page tree
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="fileTree">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Dateibaum
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									File tree
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="tableWizard">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Tabellenassistent
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Table wizard
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="listWizard">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Listenassistent
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									List wizard
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="optionWizard">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Optionsassistent
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Option wizard
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="moduleWizard">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Modulassistent
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Module wizard
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:enumeration value="checkboxWizard">
+							<xsd:annotation>
+								<xsd:documentation xml:lang="de">
+									Checkbox-Assistent
+								</xsd:documentation>
+								<xsd:documentation xml:lang="en">
+									Checkbox Wizard
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:enumeration>
+						<xsd:pattern value=".*" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="callbacks">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="de">
+				Liste von callbacks.
+			</xsd:documentation>
+			<xsd:documentation xml:lang="en">
+				List of callbacks.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element name="callback" type="dc:callback" />
+		</xsd:choice>
+	</xsd:complexType>
+
+	<xsd:complexType name="callback">
+		<xsd:attribute name="class" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation xml:lang="de">
+					Die Klasse deren
+					Methode aufgerufen wird.
+				</xsd:documentation>
+				<xsd:documentation xml:lang="en">
+					The class the method
+					is called from.
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="method" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation xml:lang="de">
+					Der Name der
+					aufzurufenden Methode.
+				</xsd:documentation>
+				<xsd:documentation xml:lang="en">
+					Name of the method
+					that get called.
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:complexType name="array">
+		<xsd:choice>
+			<xsd:element name="item" minOccurs="0" maxOccurs="unbounded"
+				type="xsd:string" />
+		</xsd:choice>
+	</xsd:complexType>
+
+	<xsd:element name="array" type="dc:array">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="de">
+				Helper Element für
+				numerische Arrays.
+			</xsd:documentation>
+			<xsd:documentation xml:lang="en">
+				Helper element for
+				numeric arrays.
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+
+	<xsd:element name="option">
+		<xsd:complexType>
+			<xsd:attribute name="value" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="optionGroup">
+		<xsd:complexType>
+			<xsd:choice>
+				<xsd:element ref="dc:option" minOccurs="0" maxOccurs="unbounded" />
+			</xsd:choice>
+
+			<xsd:attribute name="label" type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:complexType name="translations">
+		<xsd:all>
+			<xsd:element name="ad" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ae" minOccurs="0" type="xsd:string" />
+			<xsd:element name="af" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ag" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ai" minOccurs="0" type="xsd:string" />
+			<xsd:element name="al" minOccurs="0" type="xsd:string" />
+			<xsd:element name="am" minOccurs="0" type="xsd:string" />
+			<xsd:element name="an" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ao" minOccurs="0" type="xsd:string" />
+			<xsd:element name="aq" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ar" minOccurs="0" type="xsd:string" />
+			<xsd:element name="as" minOccurs="0" type="xsd:string" />
+			<xsd:element name="at" minOccurs="0" type="xsd:string" />
+			<xsd:element name="au" minOccurs="0" type="xsd:string" />
+			<xsd:element name="aw" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ax" minOccurs="0" type="xsd:string" />
+			<xsd:element name="az" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ba" minOccurs="0" type="xsd:string" />
+			<xsd:element name="bb" minOccurs="0" type="xsd:string" />
+			<xsd:element name="bd" minOccurs="0" type="xsd:string" />
+			<xsd:element name="be" minOccurs="0" type="xsd:string" />
+			<xsd:element name="bf" minOccurs="0" type="xsd:string" />
+			<xsd:element name="bg" minOccurs="0" type="xsd:string" />
+			<xsd:element name="bh" minOccurs="0" type="xsd:string" />
+			<xsd:element name="bi" minOccurs="0" type="xsd:string" />
+			<xsd:element name="bj" minOccurs="0" type="xsd:string" />
+			<xsd:element name="bl" minOccurs="0" type="xsd:string" />
+			<xsd:element name="bm" minOccurs="0" type="xsd:string" />
+			<xsd:element name="bn" minOccurs="0" type="xsd:string" />
+			<xsd:element name="bo" minOccurs="0" type="xsd:string" />
+			<xsd:element name="br" minOccurs="0" type="xsd:string" />
+			<xsd:element name="bs" minOccurs="0" type="xsd:string" />
+			<xsd:element name="bt" minOccurs="0" type="xsd:string" />
+			<xsd:element name="bv" minOccurs="0" type="xsd:string" />
+			<xsd:element name="bw" minOccurs="0" type="xsd:string" />
+			<xsd:element name="by" minOccurs="0" type="xsd:string" />
+			<xsd:element name="bz" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ca" minOccurs="0" type="xsd:string" />
+			<xsd:element name="cc" minOccurs="0" type="xsd:string" />
+			<xsd:element name="cd" minOccurs="0" type="xsd:string" />
+			<xsd:element name="cf" minOccurs="0" type="xsd:string" />
+			<xsd:element name="cg" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ch" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ci" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ck" minOccurs="0" type="xsd:string" />
+			<xsd:element name="cl" minOccurs="0" type="xsd:string" />
+			<xsd:element name="cm" minOccurs="0" type="xsd:string" />
+			<xsd:element name="cn" minOccurs="0" type="xsd:string" />
+			<xsd:element name="co" minOccurs="0" type="xsd:string" />
+			<xsd:element name="cr" minOccurs="0" type="xsd:string" />
+			<xsd:element name="cu" minOccurs="0" type="xsd:string" />
+			<xsd:element name="cv" minOccurs="0" type="xsd:string" />
+			<xsd:element name="cw" minOccurs="0" type="xsd:string" />
+			<xsd:element name="cx" minOccurs="0" type="xsd:string" />
+			<xsd:element name="cy" minOccurs="0" type="xsd:string" />
+			<xsd:element name="cz" minOccurs="0" type="xsd:string" />
+			<xsd:element name="de" minOccurs="0" type="xsd:string" />
+			<xsd:element name="dj" minOccurs="0" type="xsd:string" />
+			<xsd:element name="dk" minOccurs="0" type="xsd:string" />
+			<xsd:element name="dm" minOccurs="0" type="xsd:string" />
+			<xsd:element name="do" minOccurs="0" type="xsd:string" />
+			<xsd:element name="dz" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ec" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ee" minOccurs="0" type="xsd:string" />
+			<xsd:element name="eg" minOccurs="0" type="xsd:string" />
+			<xsd:element name="eh" minOccurs="0" type="xsd:string" />
+			<xsd:element name="er" minOccurs="0" type="xsd:string" />
+			<xsd:element name="es" minOccurs="0" type="xsd:string" />
+			<xsd:element name="et" minOccurs="0" type="xsd:string" />
+			<xsd:element name="fi" minOccurs="0" type="xsd:string" />
+			<xsd:element name="fj" minOccurs="0" type="xsd:string" />
+			<xsd:element name="fk" minOccurs="0" type="xsd:string" />
+			<xsd:element name="fm" minOccurs="0" type="xsd:string" />
+			<xsd:element name="fo" minOccurs="0" type="xsd:string" />
+			<xsd:element name="fr" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ga" minOccurs="0" type="xsd:string" />
+			<xsd:element name="gb" minOccurs="0" type="xsd:string" />
+			<xsd:element name="gd" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ge" minOccurs="0" type="xsd:string" />
+			<xsd:element name="gf" minOccurs="0" type="xsd:string" />
+			<xsd:element name="gg" minOccurs="0" type="xsd:string" />
+			<xsd:element name="gh" minOccurs="0" type="xsd:string" />
+			<xsd:element name="gi" minOccurs="0" type="xsd:string" />
+			<xsd:element name="gl" minOccurs="0" type="xsd:string" />
+			<xsd:element name="gm" minOccurs="0" type="xsd:string" />
+			<xsd:element name="gn" minOccurs="0" type="xsd:string" />
+			<xsd:element name="gp" minOccurs="0" type="xsd:string" />
+			<xsd:element name="gq" minOccurs="0" type="xsd:string" />
+			<xsd:element name="gr" minOccurs="0" type="xsd:string" />
+			<xsd:element name="gs" minOccurs="0" type="xsd:string" />
+			<xsd:element name="gt" minOccurs="0" type="xsd:string" />
+			<xsd:element name="gu" minOccurs="0" type="xsd:string" />
+			<xsd:element name="gw" minOccurs="0" type="xsd:string" />
+			<xsd:element name="gy" minOccurs="0" type="xsd:string" />
+			<xsd:element name="hk" minOccurs="0" type="xsd:string" />
+			<xsd:element name="hm" minOccurs="0" type="xsd:string" />
+			<xsd:element name="hn" minOccurs="0" type="xsd:string" />
+			<xsd:element name="hr" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ht" minOccurs="0" type="xsd:string" />
+			<xsd:element name="hu" minOccurs="0" type="xsd:string" />
+			<xsd:element name="id" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ie" minOccurs="0" type="xsd:string" />
+			<xsd:element name="il" minOccurs="0" type="xsd:string" />
+			<xsd:element name="im" minOccurs="0" type="xsd:string" />
+			<xsd:element name="in" minOccurs="0" type="xsd:string" />
+			<xsd:element name="io" minOccurs="0" type="xsd:string" />
+			<xsd:element name="iq" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ir" minOccurs="0" type="xsd:string" />
+			<xsd:element name="is" minOccurs="0" type="xsd:string" />
+			<xsd:element name="it" minOccurs="0" type="xsd:string" />
+			<xsd:element name="je" minOccurs="0" type="xsd:string" />
+			<xsd:element name="jm" minOccurs="0" type="xsd:string" />
+			<xsd:element name="jo" minOccurs="0" type="xsd:string" />
+			<xsd:element name="jp" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ke" minOccurs="0" type="xsd:string" />
+			<xsd:element name="kg" minOccurs="0" type="xsd:string" />
+			<xsd:element name="kh" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ki" minOccurs="0" type="xsd:string" />
+			<xsd:element name="km" minOccurs="0" type="xsd:string" />
+			<xsd:element name="kn" minOccurs="0" type="xsd:string" />
+			<xsd:element name="kp" minOccurs="0" type="xsd:string" />
+			<xsd:element name="kr" minOccurs="0" type="xsd:string" />
+			<xsd:element name="kv" minOccurs="0" type="xsd:string" />
+			<xsd:element name="kw" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ky" minOccurs="0" type="xsd:string" />
+			<xsd:element name="kz" minOccurs="0" type="xsd:string" />
+			<xsd:element name="la" minOccurs="0" type="xsd:string" />
+			<xsd:element name="lb" minOccurs="0" type="xsd:string" />
+			<xsd:element name="lc" minOccurs="0" type="xsd:string" />
+			<xsd:element name="li" minOccurs="0" type="xsd:string" />
+			<xsd:element name="lk" minOccurs="0" type="xsd:string" />
+			<xsd:element name="lr" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ls" minOccurs="0" type="xsd:string" />
+			<xsd:element name="lt" minOccurs="0" type="xsd:string" />
+			<xsd:element name="lu" minOccurs="0" type="xsd:string" />
+			<xsd:element name="lv" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ly" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ma" minOccurs="0" type="xsd:string" />
+			<xsd:element name="mc" minOccurs="0" type="xsd:string" />
+			<xsd:element name="md" minOccurs="0" type="xsd:string" />
+			<xsd:element name="me" minOccurs="0" type="xsd:string" />
+			<xsd:element name="mf" minOccurs="0" type="xsd:string" />
+			<xsd:element name="mg" minOccurs="0" type="xsd:string" />
+			<xsd:element name="mh" minOccurs="0" type="xsd:string" />
+			<xsd:element name="mk" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ml" minOccurs="0" type="xsd:string" />
+			<xsd:element name="mm" minOccurs="0" type="xsd:string" />
+			<xsd:element name="mn" minOccurs="0" type="xsd:string" />
+			<xsd:element name="mo" minOccurs="0" type="xsd:string" />
+			<xsd:element name="mp" minOccurs="0" type="xsd:string" />
+			<xsd:element name="mq" minOccurs="0" type="xsd:string" />
+			<xsd:element name="mr" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ms" minOccurs="0" type="xsd:string" />
+			<xsd:element name="mt" minOccurs="0" type="xsd:string" />
+			<xsd:element name="mu" minOccurs="0" type="xsd:string" />
+			<xsd:element name="mv" minOccurs="0" type="xsd:string" />
+			<xsd:element name="mw" minOccurs="0" type="xsd:string" />
+			<xsd:element name="mx" minOccurs="0" type="xsd:string" />
+			<xsd:element name="my" minOccurs="0" type="xsd:string" />
+			<xsd:element name="mz" minOccurs="0" type="xsd:string" />
+			<xsd:element name="na" minOccurs="0" type="xsd:string" />
+			<xsd:element name="nc" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ne" minOccurs="0" type="xsd:string" />
+			<xsd:element name="nf" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ng" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ni" minOccurs="0" type="xsd:string" />
+			<xsd:element name="nl" minOccurs="0" type="xsd:string" />
+			<xsd:element name="no" minOccurs="0" type="xsd:string" />
+			<xsd:element name="np" minOccurs="0" type="xsd:string" />
+			<xsd:element name="nr" minOccurs="0" type="xsd:string" />
+			<xsd:element name="nu" minOccurs="0" type="xsd:string" />
+			<xsd:element name="nz" minOccurs="0" type="xsd:string" />
+			<xsd:element name="om" minOccurs="0" type="xsd:string" />
+			<xsd:element name="pa" minOccurs="0" type="xsd:string" />
+			<xsd:element name="pe" minOccurs="0" type="xsd:string" />
+			<xsd:element name="pf" minOccurs="0" type="xsd:string" />
+			<xsd:element name="pg" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ph" minOccurs="0" type="xsd:string" />
+			<xsd:element name="pk" minOccurs="0" type="xsd:string" />
+			<xsd:element name="pl" minOccurs="0" type="xsd:string" />
+			<xsd:element name="pm" minOccurs="0" type="xsd:string" />
+			<xsd:element name="pn" minOccurs="0" type="xsd:string" />
+			<xsd:element name="pr" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ps" minOccurs="0" type="xsd:string" />
+			<xsd:element name="pt" minOccurs="0" type="xsd:string" />
+			<xsd:element name="pw" minOccurs="0" type="xsd:string" />
+			<xsd:element name="py" minOccurs="0" type="xsd:string" />
+			<xsd:element name="qa" minOccurs="0" type="xsd:string" />
+			<xsd:element name="re" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ro" minOccurs="0" type="xsd:string" />
+			<xsd:element name="rs" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ru" minOccurs="0" type="xsd:string" />
+			<xsd:element name="rw" minOccurs="0" type="xsd:string" />
+			<xsd:element name="sa" minOccurs="0" type="xsd:string" />
+			<xsd:element name="sb" minOccurs="0" type="xsd:string" />
+			<xsd:element name="sc" minOccurs="0" type="xsd:string" />
+			<xsd:element name="sd" minOccurs="0" type="xsd:string" />
+			<xsd:element name="se" minOccurs="0" type="xsd:string" />
+			<xsd:element name="sg" minOccurs="0" type="xsd:string" />
+			<xsd:element name="sh" minOccurs="0" type="xsd:string" />
+			<xsd:element name="si" minOccurs="0" type="xsd:string" />
+			<xsd:element name="sj" minOccurs="0" type="xsd:string" />
+			<xsd:element name="sk" minOccurs="0" type="xsd:string" />
+			<xsd:element name="sl" minOccurs="0" type="xsd:string" />
+			<xsd:element name="sm" minOccurs="0" type="xsd:string" />
+			<xsd:element name="sn" minOccurs="0" type="xsd:string" />
+			<xsd:element name="so" minOccurs="0" type="xsd:string" />
+			<xsd:element name="sr" minOccurs="0" type="xsd:string" />
+			<xsd:element name="st" minOccurs="0" type="xsd:string" />
+			<xsd:element name="sv" minOccurs="0" type="xsd:string" />
+			<xsd:element name="sy" minOccurs="0" type="xsd:string" />
+			<xsd:element name="sz" minOccurs="0" type="xsd:string" />
+			<xsd:element name="tc" minOccurs="0" type="xsd:string" />
+			<xsd:element name="td" minOccurs="0" type="xsd:string" />
+			<xsd:element name="tf" minOccurs="0" type="xsd:string" />
+			<xsd:element name="tg" minOccurs="0" type="xsd:string" />
+			<xsd:element name="th" minOccurs="0" type="xsd:string" />
+			<xsd:element name="tj" minOccurs="0" type="xsd:string" />
+			<xsd:element name="tk" minOccurs="0" type="xsd:string" />
+			<xsd:element name="tl" minOccurs="0" type="xsd:string" />
+			<xsd:element name="tm" minOccurs="0" type="xsd:string" />
+			<xsd:element name="tn" minOccurs="0" type="xsd:string" />
+			<xsd:element name="to" minOccurs="0" type="xsd:string" />
+			<xsd:element name="tr" minOccurs="0" type="xsd:string" />
+			<xsd:element name="tt" minOccurs="0" type="xsd:string" />
+			<xsd:element name="tv" minOccurs="0" type="xsd:string" />
+			<xsd:element name="tw" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ty" minOccurs="0" type="xsd:string" />
+			<xsd:element name="tz" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ua" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ug" minOccurs="0" type="xsd:string" />
+			<xsd:element name="um" minOccurs="0" type="xsd:string" />
+			<xsd:element name="us" minOccurs="0" type="xsd:string" />
+			<xsd:element name="uy" minOccurs="0" type="xsd:string" />
+			<xsd:element name="uz" minOccurs="0" type="xsd:string" />
+			<xsd:element name="va" minOccurs="0" type="xsd:string" />
+			<xsd:element name="vc" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ve" minOccurs="0" type="xsd:string" />
+			<xsd:element name="vg" minOccurs="0" type="xsd:string" />
+			<xsd:element name="vi" minOccurs="0" type="xsd:string" />
+			<xsd:element name="vn" minOccurs="0" type="xsd:string" />
+			<xsd:element name="vu" minOccurs="0" type="xsd:string" />
+			<xsd:element name="wf" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ws" minOccurs="0" type="xsd:string" />
+			<xsd:element name="ye" minOccurs="0" type="xsd:string" />
+			<xsd:element name="yt" minOccurs="0" type="xsd:string" />
+			<xsd:element name="za" minOccurs="0" type="xsd:string" />
+			<xsd:element name="zm" minOccurs="0" type="xsd:string" />
+			<xsd:element name="zw" minOccurs="0" type="xsd:string" />
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="labelTranslation">
+		<xsd:sequence>
+			<xsd:element name="label" type="xsd:string" />
+			<xsd:element name="description" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="labelTranslations">
+		<xsd:all>
+			<xsd:element name="ad" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ae" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="af" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ag" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ai" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="al" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="am" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="an" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ao" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="aq" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ar" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="as" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="at" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="au" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="aw" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ax" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="az" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ba" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="bb" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="bd" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="be" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="bf" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="bg" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="bh" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="bi" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="bj" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="bl" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="bm" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="bn" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="bo" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="br" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="bs" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="bt" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="bv" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="bw" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="by" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="bz" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ca" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="cc" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="cd" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="cf" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="cg" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ch" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ci" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ck" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="cl" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="cm" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="cn" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="co" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="cr" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="cu" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="cv" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="cw" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="cx" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="cy" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="cz" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="de" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="dj" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="dk" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="dm" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="do" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="dz" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ec" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ee" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="eg" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="eh" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="er" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="es" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="et" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="fi" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="fj" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="fk" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="fm" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="fo" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="fr" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ga" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="gb" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="gd" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ge" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="gf" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="gg" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="gh" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="gi" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="gl" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="gm" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="gn" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="gp" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="gq" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="gr" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="gs" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="gt" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="gu" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="gw" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="gy" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="hk" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="hm" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="hn" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="hr" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ht" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="hu" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="id" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ie" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="il" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="im" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="in" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="io" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="iq" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ir" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="is" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="it" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="je" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="jm" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="jo" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="jp" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ke" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="kg" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="kh" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ki" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="km" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="kn" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="kp" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="kr" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="kv" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="kw" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ky" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="kz" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="la" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="lb" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="lc" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="li" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="lk" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="lr" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ls" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="lt" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="lu" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="lv" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ly" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ma" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="mc" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="md" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="me" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="mf" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="mg" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="mh" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="mk" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ml" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="mm" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="mn" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="mo" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="mp" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="mq" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="mr" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ms" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="mt" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="mu" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="mv" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="mw" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="mx" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="my" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="mz" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="na" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="nc" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ne" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="nf" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ng" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ni" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="nl" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="no" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="np" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="nr" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="nu" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="nz" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="om" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="pa" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="pe" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="pf" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="pg" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ph" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="pk" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="pl" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="pm" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="pn" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="pr" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ps" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="pt" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="pw" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="py" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="qa" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="re" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ro" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="rs" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ru" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="rw" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="sa" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="sb" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="sc" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="sd" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="se" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="sg" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="sh" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="si" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="sj" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="sk" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="sl" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="sm" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="sn" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="so" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="sr" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="st" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="sv" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="sy" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="sz" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="tc" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="td" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="tf" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="tg" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="th" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="tj" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="tk" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="tl" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="tm" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="tn" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="to" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="tr" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="tt" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="tv" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="tw" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ty" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="tz" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ua" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ug" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="um" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="us" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="uy" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="uz" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="va" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="vc" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ve" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="vg" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="vi" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="vn" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="vu" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="wf" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ws" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="ye" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="yt" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="za" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="zm" minOccurs="0" type="dc:labelTranslation" />
+			<xsd:element name="zw" minOccurs="0" type="dc:labelTranslation" />
+		</xsd:all>
+	</xsd:complexType>
+</xsd:schema>
